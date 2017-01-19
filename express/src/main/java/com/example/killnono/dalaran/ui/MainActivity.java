@@ -10,15 +10,11 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.example.killnono.dalaran.BaseSubscriber;
-import com.example.killnono.dalaran.ProgressSubscriber;
+import com.example.killnono.dalaran.ui.base.BaseSubscriber;
 import com.example.killnono.dalaran.R;
-import com.example.killnono.dalaran.task.CourseTask;
-import com.example.killnono.dalaran.task.LoginTask;
+import com.example.killnono.dalaran.task.ChapterTask;
 
 import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -67,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         };
 
-        new CourseTask("math", "七年级上", "人教版").subscribe(courseSubscriber);
+        new ChapterTask("math", "七年级上", "人教版").subscribe(courseSubscriber);
 
 //        courseSubscriber.unsubscribe();
     }

@@ -19,7 +19,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **/
-package com.example.killnono.dalaran.converter;
+package com.example.killnono.dalaran.datastore.remote.converter.json;
 
 /**
  * Created by Android Studio
@@ -31,7 +31,6 @@ package com.example.killnono.dalaran.converter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
 

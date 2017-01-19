@@ -21,9 +21,9 @@
  **/
 package com.example.killnono.dalaran.task;
 
+import com.example.killnono.dalaran.datastore.local.Course;
 import com.example.killnono.dalaran.datastore.local.LocalStore;
 import com.example.killnono.dalaran.datastore.remote.CourseApiService;
-import com.example.killnono.dalaran.utils.Util;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -43,18 +43,34 @@ import rx.schedulers.Schedulers;
  * Time: 下午7:32
  * Version: 1.0
  */
-public class LoginTask extends BaseTask {
-
-    private JSONObject requestData;
-
-    public LoginTask(JSONObject requestData) {
-        this.requestData = requestData;
-    }
+public class GetMeTask extends BaseTask {
 
     public void subscribe(Subscriber<JSONObject> subscriber) {
 
+        Observable<JSONObject> localObservable = LocalStore.findDataByIdentifier("586c6a81df22245a76aa2097")
+                .observeOn(Schedulers.computation())
+                .map(new Func1<Course, JSONObject>() {
+                    @Override
+                    public JSONObject call(Course course) {
+                        JSONObject jsonObject = null;
+                        String content = course.getContent();
+                        try {
+                            jsonObject = new JSONObject(content);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        return jsonObject;
+                    }
+                });
+
+        localObservable
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(subscriber);
+
+
         Observable<JSONObject> remoteObservable = CourseApiService.Factory.getInstance().
-                loginOb(requestData);
+                getMe();
 
         remoteObservable
                 .subscribeOn(Schedulers.io())
@@ -62,9 +78,8 @@ public class LoginTask extends BaseTask {
                 .doOnNext(new Action1<JSONObject>() {
                     @Override
                     public void call(JSONObject jsonObject) {
-                        Util.testLogThreadId("doOnNext");
                         // TODO: killnono 17/1/19  cache
-                        if (getIdentifier() == null){
+                        if (getIdentifier() == null) {
                             try {
                                 String id = jsonObject.getString("_id");
                                 setIdentifier(id);
@@ -72,13 +87,12 @@ public class LoginTask extends BaseTask {
                                 e.printStackTrace();
                             }
                         }
-                        LocalStore.insertData(getIdentifier(),jsonObject.toString());
+                        LocalStore.insertData(getIdentifier(), jsonObject.toString());
                     }
                 })
-                .observeOn(AndroidSchedulers.mainThread()).
-                subscribe(subscriber);
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(subscriber);
     }
-
 
 
 }

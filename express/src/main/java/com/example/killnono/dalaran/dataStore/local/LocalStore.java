@@ -21,15 +21,16 @@
  **/
 package com.example.killnono.dalaran.datastore.local;
 
-import org.json.JSONArray;
+import android.support.annotation.NonNull;
+
+import com.example.killnono.dalaran.utils.Util;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import io.realm.Realm;
-import io.realm.RealmResults;
 import rx.Observable;
 import rx.Subscriber;
-import rx.functions.Func1;
 
 /**
  * Created by Android Studio
@@ -56,34 +57,48 @@ public class LocalStore {
         return observable;
     }
 
-    public static void insertCourse(String type, String content) {
+
+    /**
+     * 插入数据&更新数据
+     *
+     * @param identifier
+     * @param content
+     */
+    public static void insertData(String identifier, String content) {
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
-        Course course = realm.createObject(Course.class); // Create a new object
-        course.setType(type);
+        Course course;
+        course = realm.where(Course.class).equalTo("identifier", identifier).findFirst();
+        if (course == null) {
+            course = realm.createObject(Course.class,identifier);
+        }
         course.setContent(content);
         realm.commitTransaction();
     }
 
-    public static Observable<JSONArray> findListByType(final String type) {
-        Observable<JSONArray> observable = Observable.create(new Observable.OnSubscribe<JSONArray>() {
-            @Override
-            public void call(Subscriber<? super JSONArray> subscriber) {
-                Realm realm = Realm.getDefaultInstance();
-                RealmResults<Course> courses = realm.where(Course.class).equalTo("type",type).findAll();
-                for (Course course :courses) {
-                    try {
-                        JSONObject jo = new JSONObject(course.getContent());
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        subscriber.onError(e);
-                    }
+    /**
+     * 查找数据
+     *
+     * @param identifier
+     * @return
+     */
+    public static Observable<Course> findDataByIdentifier(@NonNull final String identifier) {
+        Util.testLog("findDataByIdentifier " + identifier);
+        Realm realm = Realm.getDefaultInstance();
+        return realm.where(Course.class).equalTo("identifier", identifier).findFirst().asObservable();
 
-                }
-            }
-        });
-        return observable;
     }
+//
+//    public static <T> Observable<T> findDataByIdentifier(final String identifier) {
+//        Realm realm = Realm.getDefaultInstance();
+//        return realm.where(Course.class).equalTo("identifier", identifier).findFirst().asObservable().map(new Func1<RealmObject, T>() {
+//            @Override
+//            public T call(RealmObject realmObject) {
+//                return null;
+//            }
+//        });
+//
+//    }
 
 
 }

@@ -21,13 +21,20 @@
  **/
 package com.example.killnono.dalaran.task;
 
+import android.text.TextUtils;
+import android.util.Log;
+
+import com.example.killnono.dalaran.datastore.local.Course;
+import com.example.killnono.dalaran.datastore.local.LocalStore;
 import com.example.killnono.dalaran.datastore.remote.CourseApiService;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 /**
@@ -37,13 +44,13 @@ import rx.schedulers.Schedulers;
  * Time: 下午7:32
  * Version: 1.0
  */
-public class CourseTask extends BaseTask {
+public class ChapterTask extends BaseTask {
 
     private String sub;
     private String sem;
     private String pub;
 
-    public CourseTask(String sub, String sem, String pub) {
+    public ChapterTask(String sub, String sem, String pub) {
         this.sub = sub;
         this.sem = sem;
         this.pub = pub;
@@ -52,20 +59,35 @@ public class CourseTask extends BaseTask {
     public void subscribe(Subscriber<JSONArray> subscriber) {
 
 
-//        final Observable<JSONObject> localObservable = LocalStore.loginLocal();
-//        localObservable.subscribeOn(Schedulers.newThread())
+//        /* 本地仓库 */
+//         Observable<JSONArray> localObservable = LocalStore.findDataByIdentifier(buildDataIdentifier(sub, sem, pub, "userId")).map(new Func1<Course, JSONArray>() {
+//            @Override
+//            public JSONArray call(Course course) {
+//                String content = course.getContent();
+//                JSONArray ja = new JSONArray();
+//                if (content != null) {
+//                    try {
+//                        ja = new JSONArray(content);
+//                    } catch (JSONException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//                return ja;
+//            }
+//        });
+//
+//        localObservable.subscribeOn(Schedulers.io())
 //                .observeOn(AndroidSchedulers.mainThread())
 //                .subscribe(subscriber);
 
         if (isExpired()) {
             CourseApiService service = CourseApiService.Factory.create();
             final Observable<JSONArray> remoteObservable = service.getCourse(sub, sem, pub);
-            remoteObservable.subscribeOn(Schedulers.newThread())
+
+            remoteObservable.subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread()).
                     subscribe(subscriber);
         }
-
-
     }
 
 }

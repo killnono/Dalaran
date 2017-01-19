@@ -19,7 +19,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **/
-package com.example.killnono.dalaran;
+package com.example.killnono.dalaran.ui.base;
 
 import android.text.TextUtils;
 import android.util.Log;

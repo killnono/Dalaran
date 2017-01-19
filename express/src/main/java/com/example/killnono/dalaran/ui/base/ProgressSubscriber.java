@@ -19,7 +19,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **/
-package com.example.killnono.dalaran;
+package com.example.killnono.dalaran.ui.base;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -47,14 +47,12 @@ public abstract class ProgressSubscriber<T> extends BaseSubscriber<T> {
     @Override
     public void onCompleted() {
         super.onCompleted();
-        // TODO: 16/11/21  dismiss dialog
         dismissDialog();
     }
 
     @Override
     public void onError(Throwable e) {
         super.onError(e);
-        // TODO: 16/11/21  dismiss dialog
         dismissDialog();
     }
 
@@ -77,6 +75,7 @@ public abstract class ProgressSubscriber<T> extends BaseSubscriber<T> {
         }
     }
 
+    /**/
     private void dismissDialog() {
         Log.i(TAG, "dismissDialog: ");
         if (dialog != null) {

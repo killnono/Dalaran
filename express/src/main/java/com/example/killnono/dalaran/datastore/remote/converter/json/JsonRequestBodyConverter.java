@@ -19,33 +19,29 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **/
-package com.example.killnono.dalaran;
+package com.example.killnono.dalaran.datastore.remote.converter.json;
 
-import android.app.Application;
-import android.content.Context;
+import java.io.IOException;
 
-import io.realm.Realm;
-import io.realm.RealmConfiguration;
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
+import retrofit2.Converter;
 
 /**
  * Created by Android Studio
  * User: killnono(陈凯)
- * Date: 16/11/23
- * Time: 下午2:05
+ * Date: 16/11/18
+ * Time: 下午4:56
  * Version: 1.0
  */
-public class XApplication extends Application {
-    public static Context mContext;
+final class JsonRequestBodyConverter<T> implements Converter<T, RequestBody> {
+    private static final MediaType MEDIA_TYPE = MediaType.parse("application/json; charset=UTF-8");
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        mContext = this;
-        // The Realm file will be located in Context.getFilesDir() with name "default.realm"
-        Realm.init(this);
-        RealmConfiguration config = new RealmConfiguration.Builder()
-                .deleteRealmIfMigrationNeeded().build();
+    JsonRequestBodyConverter() {
 
-        Realm.setDefaultConfiguration(config);
+    }
+
+    public RequestBody convert(T value) throws IOException {
+        return RequestBody.create(MEDIA_TYPE, value.toString());
     }
 }

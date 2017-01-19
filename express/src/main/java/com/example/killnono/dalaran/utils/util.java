@@ -19,33 +19,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **/
-package com.example.killnono.dalaran;
+package com.example.killnono.dalaran.utils;
 
-import android.app.Application;
-import android.content.Context;
-
-import io.realm.Realm;
-import io.realm.RealmConfiguration;
+import android.util.Log;
 
 /**
  * Created by Android Studio
  * User: killnono(陈凯)
- * Date: 16/11/23
- * Time: 下午2:05
+ * Date: 17/1/19
+ * Time: 下午3:01
  * Version: 1.0
  */
-public class XApplication extends Application {
-    public static Context mContext;
+public class Util {
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        mContext = this;
-        // The Realm file will be located in Context.getFilesDir() with name "default.realm"
-        Realm.init(this);
-        RealmConfiguration config = new RealmConfiguration.Builder()
-                .deleteRealmIfMigrationNeeded().build();
-
-        Realm.setDefaultConfiguration(config);
+    public static void testLogThreadId(String method) {
+        Log.i("NONO", "Method:" + method + "--threadName:" + Thread.currentThread().getName());
     }
+
+    public static void testLog(String msg) {
+        Log.i("NONO", "msg:" + msg);
+    }
+
 }

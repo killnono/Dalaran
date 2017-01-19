@@ -30,7 +30,28 @@ package com.example.killnono.dalaran.task;
  */
 public class BaseTask {
 
+
+    private String mDataIdentifier;
+
+
+    public BaseTask() {
+        this(null);
+    }
+
+    public BaseTask(String dataIdentifier) {
+        this.mDataIdentifier = dataIdentifier;
+    }
+
     protected boolean isExpired() {
         return true;
     }
+
+    public String getIdentifier() {
+        return mDataIdentifier;
+    }
+
+    protected void setIdentifier(String identifier) {
+        this.mDataIdentifier = identifier;
+    }
+
 }

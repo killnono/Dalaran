@@ -19,41 +19,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **/
-package com.example.killnono.dalaran.converter;
+package com.example.killnono.dalaran.ui.base;
+
+import android.support.v7.app.AppCompatActivity;
 
 /**
  * Created by Android Studio
  * User: killnono(陈凯)
- * Date: 16/11/18
- * Time: 下午4:39
+ * Date: 17/1/19
+ * Time: 下午1:23
  * Version: 1.0
  */
-
-import com.google.gson.Gson;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import okhttp3.ResponseBody;
-import retrofit2.Converter;
-
-import java.io.IOException;
-
-final class JsonResponseBodyConverter<T> implements Converter<ResponseBody, T> {
-
-    JsonResponseBodyConverter() {
-
-    }
-
-    @Override
-    public T convert(ResponseBody value) throws IOException {
-        JSONObject jsonObj;
-        try {
-            jsonObj = new JSONObject(value.string());
-            return (T) jsonObj;
-        } catch (JSONException e) {
-            return null;
-        }
-    }
-
+public class BaseActivity extends AppCompatActivity {
 }

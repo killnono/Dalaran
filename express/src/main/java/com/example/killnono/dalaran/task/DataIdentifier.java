@@ -19,29 +19,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **/
-package com.example.killnono.dalaran.converter;
-
-import java.io.IOException;
-
-import okhttp3.MediaType;
-import okhttp3.RequestBody;
-import retrofit2.Converter;
+package com.example.killnono.dalaran.task;
 
 /**
  * Created by Android Studio
  * User: killnono(陈凯)
- * Date: 16/11/18
- * Time: 下午4:56
+ * Date: 17/1/19
+ * Time: 下午3:26
  * Version: 1.0
  */
-final class JsonRequestBodyConverter<T> implements Converter<T, RequestBody> {
-    private static final MediaType MEDIA_TYPE = MediaType.parse("application/json; charset=UTF-8");
-
-    JsonRequestBodyConverter() {
-
-    }
-
-    public RequestBody convert(T value) throws IOException {
-        return RequestBody.create(MEDIA_TYPE, value.toString());
-    }
+public class DataIdentifier {
+    public static  String I_ME = "%s"; /* id */
 }

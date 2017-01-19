@@ -34,9 +34,8 @@ import io.realm.annotations.PrimaryKey;
 public class Course extends RealmObject {
     private String type;
     private String content;
-
     @PrimaryKey
-    private String id;
+    private String identifier;
 
     public String getType() {
         return type;
@@ -54,11 +53,12 @@ public class Course extends RealmObject {
         this.content = content;
     }
 
-    public String getId() {
-        return id;
+
+    public String getIdentifier() {
+        return identifier;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
     }
 }
