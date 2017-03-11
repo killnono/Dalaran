@@ -32,12 +32,12 @@ import android.util.Log;
  */
 public class Util {
 
-    public static void testLogThreadId(String method) {
+    public static void logMethodThreadId(String method) {
         Log.i("NONO", "Method:" + method + "--threadName:" + Thread.currentThread().getName());
     }
 
-    public static void testLog(String msg) {
-        Log.i("NONO", "msg:" + msg);
+    public static void log(String msg) {
+        Log.i("NONO", msg);
     }
 
 }

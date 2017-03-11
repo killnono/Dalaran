@@ -6,15 +6,18 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
-import android.widget.Toast;
 
-import com.example.killnono.dalaran.*;
-import com.example.killnono.dalaran.task.GetMeTask;
-import com.example.killnono.dalaran.task.LoginTask;
+import com.example.killnono.dalaran.R;
+import com.example.killnono.dalaran.domain.task.ChapterTask;
+import com.example.killnono.dalaran.domain.task.GetMeTask;
+import com.example.killnono.dalaran.domain.task.LoginTask;
+import com.example.killnono.dalaran.domain.task.TestGroupTask;
 import com.example.killnono.dalaran.ui.base.BaseActivity;
+import com.example.killnono.dalaran.ui.base.BaseSubscriber;
 import com.example.killnono.dalaran.ui.base.ProgressSubscriber;
 import com.example.killnono.dalaran.utils.Util;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -29,7 +32,6 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
     private View                 mProgressView;
     private View                 mLoginFormView;
 
-    private ProgressSubscriber<JSONObject> loginSubscriber;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,17 +50,35 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
     }
 
 
+    private void pressureTest() {
+
+        BaseSubscriber<JSONObject> baseSubscriber = new BaseSubscriber<JSONObject>() {
+            @Override
+            public void onNext(JSONObject jsonObject) {
+
+            }
+        };
+        for (int i = 0; i < 1; i++) {
+//            login();
+            subscriberBindLife(new TestGroupTask(new GetMeTask().createFinalFlowObservable(),
+                            new ChapterTask("math", "七年级上", "人教版").createFinalFlowObservable()).createFinalFlowObservable(),
+                    baseSubscriber);
+//            getMe();
+//            getCourse();
+        }
+    }
+
     /**
      * 登录
      */
     private void login() {
-        loginSubscriber = new ProgressSubscriber<JSONObject>(this) {
+        BaseSubscriber<JSONObject> loginSubscriber = new BaseSubscriber<JSONObject>() {
             @Override
             public void onNext(JSONObject jsonObject) {
-                Util.testLogThreadId("onNext");
+                Util.logMethodThreadId("onNext:");
                 try {
                     String name = (String) jsonObject.get("name");
-                    Toast.makeText(LoginActivity.this, name, Toast.LENGTH_LONG).show();
+//                    Toast.makeText(LoginActivity.this, name, Toast.LENGTH_LONG).show();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -74,7 +94,7 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
         try {
             requestBodyJO.put("name", mEmailView.getText().toString()); // case insensitive
             requestBodyJO.put("password", mPasswordView.getText().toString());
-            new LoginTask(requestBodyJO).subscribe(loginSubscriber);
+            subscriberBindLife(new LoginTask(requestBodyJO).createFinalFlowObservable(), loginSubscriber);
         } catch (Exception e) {
             Log.e("NONO", "loginTest: ", e);
         }
@@ -88,7 +108,8 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
                 login();
                 break;
             case R.id.get_me_button:
-                getMe();
+//                getMe(0);
+                pressureTest();
                 break;
         }
     }
@@ -97,13 +118,16 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
      * 登录
      */
     private void getMe() {
-        ProgressSubscriber subscriber = new ProgressSubscriber<JSONObject>(this) {
+        ProgressSubscriber<JSONObject> subscriber = new ProgressSubscriber<JSONObject>(this) {
+
             @Override
             public void onNext(JSONObject jsonObject) {
-                Util.testLogThreadId("onNext");
+                Util.logMethodThreadId("onNext:getMe----");
                 try {
                     String name = (String) jsonObject.get("name");
-                    Toast.makeText(LoginActivity.this, name, Toast.LENGTH_LONG).show();
+//                    Toast.makeText(LoginActivity.this, name, Toast.LENGTH_LONG).show();
+                    Util.log("onNext==" + name);
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -115,9 +139,20 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
             }
         };
 
-        new GetMeTask().subscribe(subscriber);
-
-
+        subscriberBindLife(new GetMeTask().createFinalFlowObservable(), subscriber);
     }
+
+
+    private void getCourse() {
+        BaseSubscriber courseSubscriber = new BaseSubscriber<JSONArray>() {
+            @Override
+            public void onNext(JSONArray jsonObject) {
+                Util.logMethodThreadId("onNext:getCourse----");
+            }
+
+        };
+        subscriberBindLife(new ChapterTask("math", "七年级上", "人教版").createFinalFlowObservable(), courseSubscriber);
+    }
+
 }
 

@@ -19,6 +19,11 @@
             android:id="@+id/btn_login_page"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
+        <Button
+            android:text="new page"
+            android:id="@+id/btn_new"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
     </LinearLayout>
     <ImageView
         android:id="@+id/img"

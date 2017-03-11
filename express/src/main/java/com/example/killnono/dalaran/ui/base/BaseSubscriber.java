@@ -22,18 +22,17 @@
 package com.example.killnono.dalaran.ui.base;
 
 import android.text.TextUtils;
-import android.util.Log;
-import android.widget.Toast;
 
+import com.example.killnono.dalaran.exception.XDBException;
 import com.example.killnono.dalaran.manager.ToastManager;
+import com.example.killnono.dalaran.utils.Util;
 
 import org.json.JSONObject;
 
-import java.io.IOException;
-
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
+import retrofit2.HttpException;
 import retrofit2.Response;
-import retrofit2.adapter.rxjava.HttpException;
-import rx.Subscriber;
 
 /**
  * Created by Android Studio
@@ -42,18 +41,24 @@ import rx.Subscriber;
  * Time: 下午2:56
  * Version: 1.0
  */
-public abstract class BaseSubscriber<T> extends Subscriber<T> {
+public abstract class BaseSubscriber<T> implements Observer<T> {
 
-    private static final String TAG = "NONO";
+    Disposable mDisposable;
 
     @Override
-    public void onCompleted() {
-        Log.i(TAG, "onCompleted: ");
+    public void onSubscribe(Disposable d) {
+        Util.log("onSubscribe: ");
+        this.mDisposable = d;
+    }
+
+    @Override
+    public void onComplete() {
+        Util.log("onCompleted:");
     }
 
     @Override
     public void onError(Throwable e) {
-        Log.i(TAG, "onError: " + e.getMessage());
+        Util.log("onError: " + e.getMessage());
         //handle http exception
         if (e instanceof HttpException) {
             Response response = ((HttpException) e).response();
@@ -73,12 +78,15 @@ public abstract class BaseSubscriber<T> extends Subscriber<T> {
             if (!TextUtils.isEmpty(errorMsg)) {
                 ToastManager.show(errorMsg);
             }
+
+            /* handle some code*/
+            if (403 == code || 401 == code) {
+                /* 去登录界面 */
+            }
+
+        } else if (e instanceof XDBException) { /*handle db exception*/
+            ToastManager.show(e.getMessage());
         }
-
     }
 
-    @Override
-    public void onStart() {
-        Log.i(TAG, "onStart: ");
-    }
 }

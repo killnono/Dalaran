@@ -3,20 +3,21 @@ package com.example.killnono.dalaran.ui;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.killnono.dalaran.NewPageActivity;
+import com.example.killnono.dalaran.ui.base.BaseActivity;
 import com.example.killnono.dalaran.ui.base.BaseSubscriber;
 import com.example.killnono.dalaran.R;
-import com.example.killnono.dalaran.task.ChapterTask;
+import com.example.killnono.dalaran.domain.task.ChapterTask;
 
 import org.json.JSONArray;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     private Context context;
     private static final String TAG = "NONO";
@@ -36,6 +37,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void initViews() {
         ImageView imageView = (ImageView) findViewById(R.id.img);
         findViewById(R.id.btn_login_page).setOnClickListener(this);
+        findViewById(R.id.btn_new).setOnClickListener(this);
         Glide.with(this).load(R.drawable.feedback_mascot_continue_video).into(imageView);
     }
 
@@ -54,7 +56,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void getCourse() {
         courseSubscriber = new BaseSubscriber<JSONArray>() {
-
             @Override
             public void onNext(JSONArray jsonObject) {
                 Log.i(TAG, "onNext: ");
@@ -62,20 +63,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
 
         };
-
-        new ChapterTask("math", "七年级上", "人教版").subscribe(courseSubscriber);
-
-//        courseSubscriber.unsubscribe();
+        subscriberBindLife(new ChapterTask("math", "七年级上", "人教版").createFinalFlowObservable(), courseSubscriber);
     }
 
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.btn_login_page:
+            case R.id.btn_login_page: {
                 Intent intent = new Intent(this, LoginActivity.class);
                 startActivity(intent);
+
                 break;
+            }
+            case R.id.btn_new: {
+                Intent intent = new Intent(this, NewPageActivity.class);
+                startActivity(intent);
+                break;
+            }
         }
     }
 }

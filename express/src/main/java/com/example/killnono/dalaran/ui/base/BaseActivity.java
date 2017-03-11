@@ -21,7 +21,21 @@
  **/
 package com.example.killnono.dalaran.ui.base;
 
-import android.support.v7.app.AppCompatActivity;
+import com.trello.rxlifecycle2.android.ActivityEvent;
+import com.trello.rxlifecycle2.components.RxActivity;
+
+import org.reactivestreams.Subscriber;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+
+import io.reactivex.Observable;
+import io.reactivex.Observer;
+import io.reactivex.schedulers.Schedulers;
+
+import static io.reactivex.android.schedulers.AndroidSchedulers.mainThread;
 
 /**
  * Created by Android Studio
@@ -30,5 +44,29 @@ import android.support.v7.app.AppCompatActivity;
  * Time: 下午1:23
  * Version: 1.0
  */
-public class BaseActivity extends AppCompatActivity {
+public class BaseActivity extends RxActivity {
+
+
+    /**
+     * @param observable
+     * @param s
+     * @param <T>
+     */
+    protected <T> void subscriberBindLife(Observable<T> observable, Observer<T> s) {
+        observable.compose(this.<T>bindUntilEvent(ActivityEvent.STOP)).
+                subscribeOn(Schedulers.io())
+                .observeOn(mainThread())
+                .subscribe(s);
+    }
+
+    protected <T> void subscriberNoLife(Observable<T> observable, Observer<T> s) {
+        observable.subscribeOn(Schedulers.io())
+                .observeOn(mainThread())
+                .subscribe(s);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
 }

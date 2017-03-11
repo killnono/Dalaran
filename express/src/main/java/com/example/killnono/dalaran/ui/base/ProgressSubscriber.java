@@ -26,6 +26,10 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.util.Log;
 
+import com.example.killnono.dalaran.utils.Util;
+
+import io.reactivex.disposables.Disposable;
+
 /**
  * Created by Android Studio
  * User: killnono(陈凯)
@@ -35,18 +39,22 @@ import android.util.Log;
  */
 public abstract class ProgressSubscriber<T> extends BaseSubscriber<T> {
 
-    private static final String TAG = "NONO";
-    private Activity mCurrentActivity;
-
+    private Activity       mCurrentActivity;
     private ProgressDialog dialog;
+
+    @Override
+    public void onSubscribe(Disposable d) {
+        super.onSubscribe(d);
+        showDialog();
+    }
 
     public ProgressSubscriber(Activity activity) {
         this.mCurrentActivity = activity;
     }
 
     @Override
-    public void onCompleted() {
-        super.onCompleted();
+    public void onComplete() {
+        super.onComplete();
         dismissDialog();
     }
 
@@ -56,28 +64,26 @@ public abstract class ProgressSubscriber<T> extends BaseSubscriber<T> {
         dismissDialog();
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        showDialog();
-    }
+
+
+
 
     private void showDialog() {
-        Log.i(TAG, "showDialog: ");
         if (dialog == null) {
             dialog = ProgressDialog.show(mCurrentActivity, "登陆中", "请稍等", false, true, new DialogInterface.OnCancelListener() {
                 @Override
                 public void onCancel(DialogInterface dialog) {
-                    Log.i(TAG, "pre onCancel: ");
-                    unsubscribe();
+                    Util.log("ProgressDialog dialog is canceled");
+                    mDisposable.dispose();
                 }
             });
         }
     }
 
-    /**/
+    /**
+     * dismiss dialog
+     */
     private void dismissDialog() {
-        Log.i(TAG, "dismissDialog: ");
         if (dialog != null) {
             dialog.dismiss();
             dialog = null;

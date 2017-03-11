@@ -24,6 +24,9 @@ package com.example.killnono.dalaran;
 import android.app.Application;
 import android.content.Context;
 
+import com.example.killnono.common.Test;
+import com.squareup.leakcanary.LeakCanary;
+
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
@@ -40,12 +43,20 @@ public class XApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        Test test = new Test();
         mContext = this;
         // The Realm file will be located in Context.getFilesDir() with name "default.realm"
         Realm.init(this);
         RealmConfiguration config = new RealmConfiguration.Builder()
-                .deleteRealmIfMigrationNeeded().build();
-
+                .deleteRealmIfMigrationNeeded()
+                .build();
         Realm.setDefaultConfiguration(config);
+
+        if (LeakCanary.isInAnalyzerProcess(this)) {
+            // This process is dedicated to LeakCanary for heap analysis.
+            // You should not init your app in this process.
+            return;
+        }
+        LeakCanary.install(this);
     }
 }
