@@ -9,7 +9,6 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.example.killnono.dalaran.NewPageActivity;
 import com.example.killnono.dalaran.ui.base.BaseActivity;
 import com.example.killnono.dalaran.ui.base.BaseSubscriber;
 import com.example.killnono.dalaran.R;

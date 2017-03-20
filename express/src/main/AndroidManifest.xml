@@ -27,7 +27,7 @@
             android:name=".ui.LoginActivity"
             android:label="@string/title_activity_login"/>
         <activity
-            android:name=".NewPageActivity"
+            android:name=".ui.NewPageActivity"
             android:label="@string/title_activity_new_page"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
