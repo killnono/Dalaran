@@ -19,45 +19,26 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **/
-package com.example.killnono.dalaran;
+package com.example.killnono.dalaran.dataprovider.local;
 
-import android.app.Application;
-import android.content.Context;
-
-import com.example.killnono.common.Test;
-import com.squareup.leakcanary.LeakCanary;
-
-import io.realm.Realm;
-import io.realm.RealmConfiguration;
+import com.example.killnono.dalaran.exception.XDBException;
 
 /**
  * Created by Android Studio
  * User: killnono(陈凯)
- * Date: 16/11/23
- * Time: 下午2:05
+ * Date: 17/3/8
+ * TiØme: 下午11:44
  * Version: 1.0
  */
+public interface IDBEngine<V, T> {
 
-public class XApplication extends Application {
-    public static Context mContext;
+    void save(V entity, T t) throws XDBException;
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        Test test = new Test();
-        mContext = this;
-        // The Realm file will be located in Context.getFilesDir() with name "default.realm"
-        Realm.init(this);
-        RealmConfiguration config = new RealmConfiguration.Builder()
-                .deleteRealmIfMigrationNeeded()
-                .build();
-        Realm.setDefaultConfiguration(config);
+    V delete(String cacheId, T t) throws XDBException;
 
-        if (LeakCanary.isInAnalyzerProcess(this)) {
-            // This process is dedicated to LeakCanary for heap analysis.
-            // You should not init your app in this process.
-            return;
-        }
-        LeakCanary.install(this);
-    }
+    void update(V entity, T t) throws XDBException;
+
+    V find(String cacheId, T t) throws XDBException;
+
+    long count(T t) throws XDBException;
 }

@@ -13,7 +13,7 @@ import com.example.killnono.dalaran.NewPageActivity;
 import com.example.killnono.dalaran.ui.base.BaseActivity;
 import com.example.killnono.dalaran.ui.base.BaseSubscriber;
 import com.example.killnono.dalaran.R;
-import com.example.killnono.dalaran.domain.task.ChapterTask;
+import com.example.killnono.dalaran.domain.task.request.ChapterRequest;
 
 import org.json.JSONArray;
 
@@ -63,7 +63,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             }
 
         };
-        subscriberBindLife(new ChapterTask("math", "七年级上", "人教版").createFinalFlowObservable(), courseSubscriber);
+        subscriberBindLife(new ChapterRequest("math", "七年级上", "人教版").createFinalFlowObservable(), courseSubscriber);
     }
 
 

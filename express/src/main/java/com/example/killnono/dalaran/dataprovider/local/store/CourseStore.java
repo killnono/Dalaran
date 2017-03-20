@@ -19,11 +19,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **/
-package com.example.killnono.dalaran.dataprovider.local;
+package com.example.killnono.dalaran.dataprovider.local.store;
 
 import android.support.annotation.NonNull;
 
-import com.example.killnono.dalaran.dataprovider.local.store.Course;
+import com.example.killnono.dalaran.dataprovider.local.BaseLocalStore;
+import com.example.killnono.dalaran.dataprovider.local.RealmClient;
 import com.example.killnono.dalaran.exception.XDBException;
 import com.example.killnono.dalaran.utils.Util;
 
@@ -35,35 +36,42 @@ import io.realm.Realm;
 /**
  * Created by Android Studio
  * User: killnono(陈凯)
- * Date: 16/11/21
- * Time: 上午11:55
+ * Date: 17/3/9
+ * Time: 下午5:06
  * Version: 1.0
  */
-public class LocalStore {
+public class CourseStore extends BaseLocalStore {
 
-    /**
-     *
-     * @param identifier
-     * @param content
-     * @return
-     */
-    public static Observable<Long> saveData(final String identifier, final String content) {
+    private RealmClient mIDBEngine;
+
+    private static class SingletonHolder {
+        private static final CourseStore INSTANCE = new CourseStore();
+    }
+
+    private CourseStore() {
+        mIDBEngine = new RealmClient();
+    }
+
+    public static final CourseStore getInstance() {
+        return SingletonHolder.INSTANCE;
+    }
+
+    public Observable<Long> saveData(final String cacheId, final String content) {
         return Observable.create(new ObservableOnSubscribe<Long>() {
             @Override
             public void subscribe(ObservableEmitter<Long> e) throws Exception {
                 long size = 0;
+                /*start count time */
                 long time = System.currentTimeMillis();
                 Util.logMethodThreadId("saveData");
                 Util.log("--> Start cache2Disk:[data]  " + content);
                 Course course = new Course();
-                course.setCacheId(identifier);
+                course.setCacheId(cacheId);
                 course.setData(content);
                 try {
-                    Realm realm = Realm.getDefaultInstance();
-                    realm.beginTransaction();
-                    realm.copyToRealmOrUpdate(course);
-                    realm.commitTransaction();
-                    size = realm.where(Course.class).findAll().size();
+                    mIDBEngine.save(course, Course.class);
+                    mIDBEngine.count(Course.class);
+                    /*end count time */
                     time = System.currentTimeMillis() - time;
                     Util.log("<-- End cache2Disk(" + time + "):[data] " + content);
                 } catch (Exception exception) {
@@ -76,30 +84,22 @@ public class LocalStore {
     }
 
 
-
     /**
      * 查找数据
      *
-     * @param identifier
+     * @param cacheId
      * @return
      */
-    public static Observable<Course> findDataByIdentifier(@NonNull final String identifier) {
+    public Observable<Course> findDataByIdentifier(@NonNull final String cacheId) {
         Observable<Course> courseObservable = Observable.create(new ObservableOnSubscribe<Course>() {
             @Override
             public void subscribe(ObservableEmitter<Course> e) throws Exception {
                 Util.logMethodThreadId("findDataByIdentifier");
                 long time = System.currentTimeMillis();
-                Util.log("--> Start getCache2Disk: [identifier] = " + identifier);
-                Realm realm = Realm.getDefaultInstance();
-                Course course = realm.where(Course.class).equalTo("identifier", identifier).findFirst();
+                Course result = (Course) mIDBEngine.find(cacheId, Course.class);
                 /* log time */
                 time = System.currentTimeMillis() - time;
-                Course result = null;
-                if (course != null) {
-                    result = realm.copyFromRealm(course);
-                }
-                Util.log("<-- End getCache2Disk(" + time + "):" + "[identifier] = " + identifier + " [data] = " + course.getData());
-
+                Util.log("<-- End getCache2Disk(" + time + "):" + "[identifier] = " + cacheId + " [data] = " + result.getData());
                 e.onNext(result);
                 e.onComplete();
             }
@@ -108,10 +108,6 @@ public class LocalStore {
         });
 
         return courseObservable;
-
-    }
-
-    public static void deleteData() {
 
     }
 

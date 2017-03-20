@@ -19,18 +19,60 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **/
-package com.example.killnono.dalaran.domain.task.base;
+package com.example.killnono.dalaran.domain.task.request;
+
+import com.example.killnono.dalaran.dataprovider.remote.apiservice.CourseApiService;
+import com.example.killnono.dalaran.domain.task.request.strategy.StrategyType;
+
+import org.json.JSONObject;
 
 import io.reactivex.Observable;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.functions.Function;
+
 
 /**
  * Created by Android Studio
  * User: killnono(陈凯)
- * Date: 17/3/8
- * Time: 下午10:05
+ * Date: 16/11/18
+ * Time: 下午7:32
  * Version: 1.0
  */
-public interface ITask<V> {
+public class LoginRequest extends UserInfoRelatedRequest<JSONObject> {
 
-    Observable<V> createFinalFlowObservable();
+    private JSONObject requestData;
+
+    public LoginRequest(JSONObject requestData) {
+        this.requestData = requestData;
+    }
+
+
+    @Override
+    protected String buildCacheId() {
+        return null;
+    }
+
+    @Override
+    protected StrategyType getFlowStrategyType() {
+        return StrategyType.NET_CACHE;
+    }
+
+
+    @Override
+    public Observable<JSONObject> remoteObservableOrigin() {
+        return CourseApiService.Factory.getInstance().loginOb(requestData);
+    }
+
+
+    @Override
+    public Function<JSONObject, JSONObject> netDataMapFunc() {
+        return new Function<JSONObject, JSONObject>() {
+            @Override
+            public JSONObject apply(@NonNull JSONObject jsonObject) throws Exception {
+                return jsonObject;
+            }
+        };
+    }
+
+
 }

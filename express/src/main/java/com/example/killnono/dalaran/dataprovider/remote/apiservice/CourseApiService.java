@@ -23,6 +23,8 @@ import retrofit2.http.Query;
  */
 public interface CourseApiService {
 
+    String CHAPTERS = "chapters";
+
     /* test */
 //    String BASE_URL = "http://10.8.8.8:9430";
     String BASE_URL = "https://android-api-v4-0.yangcong345.com";
@@ -58,7 +60,7 @@ public interface CourseApiService {
     Observable<Map<String, Object>> loginOb1(@Body Map<String, Object> requestJO);
 
 
-    @GET("chapters")
+    @GET(CHAPTERS)
     Observable<JSONArray> getCourse(@Query("subject") String subject,
                                     @Query("semester") String semester,
                                     @Query("publisher") String publisher);

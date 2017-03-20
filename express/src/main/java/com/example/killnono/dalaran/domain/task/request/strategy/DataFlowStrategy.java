@@ -19,45 +19,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **/
-package com.example.killnono.dalaran;
+package com.example.killnono.dalaran.domain.task.request.strategy;
 
-import android.app.Application;
-import android.content.Context;
-
-import com.example.killnono.common.Test;
-import com.squareup.leakcanary.LeakCanary;
-
-import io.realm.Realm;
-import io.realm.RealmConfiguration;
+import io.reactivex.Observable;
 
 /**
  * Created by Android Studio
  * User: killnono(陈凯)
- * Date: 16/11/23
- * Time: 下午2:05
+ * Date: 17/3/8
+ * Time: 下午3:44
  * Version: 1.0
  */
+public interface DataFlowStrategy<V, L, T> {
 
-public class XApplication extends Application {
-    public static Context mContext;
+    public Observable<V> getFlowObservable();
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        Test test = new Test();
-        mContext = this;
-        // The Realm file will be located in Context.getFilesDir() with name "default.realm"
-        Realm.init(this);
-        RealmConfiguration config = new RealmConfiguration.Builder()
-                .deleteRealmIfMigrationNeeded()
-                .build();
-        Realm.setDefaultConfiguration(config);
-
-        if (LeakCanary.isInAnalyzerProcess(this)) {
-            // This process is dedicated to LeakCanary for heap analysis.
-            // You should not init your app in this process.
-            return;
-        }
-        LeakCanary.install(this);
-    }
 }

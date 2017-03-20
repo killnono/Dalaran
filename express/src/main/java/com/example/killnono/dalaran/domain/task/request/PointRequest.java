@@ -19,45 +19,31 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **/
-package com.example.killnono.dalaran;
+package com.example.killnono.dalaran.domain.task.request;
 
-import android.app.Application;
-import android.content.Context;
+import com.example.killnono.dalaran.dataprovider.remote.apiservice.OrderApiService;
 
-import com.example.killnono.common.Test;
-import com.squareup.leakcanary.LeakCanary;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
-import io.realm.Realm;
-import io.realm.RealmConfiguration;
+import io.reactivex.Observable;
 
 /**
  * Created by Android Studio
  * User: killnono(陈凯)
- * Date: 16/11/23
- * Time: 下午2:05
+ * Date: 17/3/8
+ * Time: 下午9:14
  * Version: 1.0
  */
-
-public class XApplication extends Application {
-    public static Context mContext;
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        Test test = new Test();
-        mContext = this;
-        // The Realm file will be located in Context.getFilesDir() with name "default.realm"
-        Realm.init(this);
-        RealmConfiguration config = new RealmConfiguration.Builder()
-                .deleteRealmIfMigrationNeeded()
-                .build();
-        Realm.setDefaultConfiguration(config);
-
-        if (LeakCanary.isInAnalyzerProcess(this)) {
-            // This process is dedicated to LeakCanary for heap analysis.
-            // You should not init your app in this process.
-            return;
-        }
-        LeakCanary.install(this);
-    }
-}
+//public class PointRequest extends BaseRequest<JSONArray, Object, JSONObject> {
+//
+//    public PointRequest() {
+//
+//    }
+//
+//    @Override
+//    public Observable<JSONObject> remoteObservableOrigin() {
+//        return OrderApiService.Factory.getInstance().postEvent(null);
+//    }
+//
+//}

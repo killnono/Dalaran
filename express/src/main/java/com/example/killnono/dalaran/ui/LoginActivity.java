@@ -8,10 +8,10 @@ import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 
 import com.example.killnono.dalaran.R;
-import com.example.killnono.dalaran.domain.task.ChapterTask;
-import com.example.killnono.dalaran.domain.task.GetMeTask;
-import com.example.killnono.dalaran.domain.task.LoginTask;
-import com.example.killnono.dalaran.domain.task.TestGroupTask;
+import com.example.killnono.dalaran.domain.task.request.ChapterRequest;
+import com.example.killnono.dalaran.domain.task.request.GetMeRequest;
+import com.example.killnono.dalaran.domain.task.request.LoginRequest;
+import com.example.killnono.dalaran.domain.task.request.TestGroupTask;
 import com.example.killnono.dalaran.ui.base.BaseActivity;
 import com.example.killnono.dalaran.ui.base.BaseSubscriber;
 import com.example.killnono.dalaran.ui.base.ProgressSubscriber;
@@ -60,8 +60,8 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
         };
         for (int i = 0; i < 1; i++) {
 //            login();
-            subscriberBindLife(new TestGroupTask(new GetMeTask().createFinalFlowObservable(),
-                            new ChapterTask("math", "七年级上", "人教版").createFinalFlowObservable()).createFinalFlowObservable(),
+            subscriberBindLife(new TestGroupTask(new GetMeRequest().createFinalFlowObservable(),
+                            new ChapterRequest("math", "七年级上", "人教版").createFinalFlowObservable()).createFinalFlowObservable(),
                     baseSubscriber);
 //            getMe();
 //            getCourse();
@@ -94,7 +94,7 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
         try {
             requestBodyJO.put("name", mEmailView.getText().toString()); // case insensitive
             requestBodyJO.put("password", mPasswordView.getText().toString());
-            subscriberBindLife(new LoginTask(requestBodyJO).createFinalFlowObservable(), loginSubscriber);
+            subscriberBindLife(new LoginRequest(requestBodyJO).createFinalFlowObservable(), loginSubscriber);
         } catch (Exception e) {
             Log.e("NONO", "loginTest: ", e);
         }
@@ -119,7 +119,6 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
      */
     private void getMe() {
         ProgressSubscriber<JSONObject> subscriber = new ProgressSubscriber<JSONObject>(this) {
-
             @Override
             public void onNext(JSONObject jsonObject) {
                 Util.logMethodThreadId("onNext:getMe----");
@@ -139,7 +138,7 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
             }
         };
 
-        subscriberBindLife(new GetMeTask().createFinalFlowObservable(), subscriber);
+        subscriberBindLife(new GetMeRequest().createFinalFlowObservable(), subscriber);
     }
 
 
@@ -151,7 +150,7 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
             }
 
         };
-        subscriberBindLife(new ChapterTask("math", "七年级上", "人教版").createFinalFlowObservable(), courseSubscriber);
+        subscriberBindLife(new ChapterRequest("math", "七年级上", "人教版").createFinalFlowObservable(), courseSubscriber);
     }
 
 }
