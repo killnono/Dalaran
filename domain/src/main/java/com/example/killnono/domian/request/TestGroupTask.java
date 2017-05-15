@@ -19,55 +19,51 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **/
-package com.example.killnono.dalaran.ui.base;
+package com.example.killnono.domian.request;
 
-import com.trello.rxlifecycle2.android.ActivityEvent;
-import com.trello.rxlifecycle2.components.RxActivity;
+import android.util.Log;
 
-import org.reactivestreams.Subscriber;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
+import com.example.killnono.domian.base.BaseGroupTask;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import io.reactivex.Observable;
-import io.reactivex.Observer;
-import io.reactivex.schedulers.Schedulers;
-
-import static io.reactivex.android.schedulers.AndroidSchedulers.mainThread;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.functions.BiFunction;
 
 /**
  * Created by Android Studio
  * User: killnono(陈凯)
- * Date: 17/1/19
- * Time: 下午1:23
+ * Date: 17/3/8
+ * Time: 下午9:53
  * Version: 1.0
  */
-public class BaseActivity extends RxActivity {
+public class TestGroupTask extends BaseGroupTask<JSONObject> {
 
 
-    /**
-     * @param observable
-     * @param s
-     * @param <T>
-     */
-    protected <T> void subscriberBindLife(Observable<T> observable, Observer<T> s) {
-        observable.
-                subscribeOn(Schedulers.io())
-                .observeOn(mainThread())
-                .compose(this.<T>bindUntilEvent(ActivityEvent.STOP))
-                .subscribe(s);
-    }
+    private Observable<JSONObject> getMe;
+    private Observable<JSONArray>  chapter;
 
-    protected <T> void subscriberNoLife(Observable<T> observable, Observer<T> s) {
-        observable.subscribeOn(Schedulers.io())
-                .observeOn(mainThread())
-                .subscribe(s);
+    public TestGroupTask(Observable<JSONObject> getMe, Observable<JSONArray> chapter) {
+        this.getMe = getMe;
+        this.chapter = chapter;
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    public Observable<JSONObject> createFinalFlowObservable() {
+        return Observable.zip(getMe, chapter, new BiFunction<JSONObject, JSONArray, JSONObject>() {
+            @Override
+            public JSONObject apply(@NonNull JSONObject jsonObject, @NonNull JSONArray jsonArray) throws Exception {
+                String name = jsonObject.getString("name");
+                Log.d("NONO", "TestGroupTask---" + name + ":" + jsonArray.length());
+                return new JSONObject();
+            }
+        });
+
+
     }
+
+
 }

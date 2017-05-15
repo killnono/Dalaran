@@ -8,18 +8,22 @@ import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 
 import com.example.killnono.dalaran.R;
-import com.example.killnono.dalaran.domain.task.request.ChapterRequest;
-import com.example.killnono.dalaran.domain.task.request.GetMeRequest;
-import com.example.killnono.dalaran.domain.task.request.LoginRequest;
-import com.example.killnono.dalaran.domain.task.request.TestGroupTask;
 import com.example.killnono.dalaran.ui.base.BaseActivity;
 import com.example.killnono.dalaran.ui.base.BaseSubscriber;
 import com.example.killnono.dalaran.ui.base.ProgressSubscriber;
 import com.example.killnono.dalaran.utils.Util;
+import com.example.killnono.domian.request.CVSRequest;
+import com.example.killnono.domian.request.ChapterRequest;
+import com.example.killnono.domian.request.GetMeRequest;
+import com.example.killnono.domian.request.LoginRequest;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import io.reactivex.Observable;
+
+import static com.example.killnono.domian.request.strategy.StrategyType.*;
 
 /**
  * A login screen that offers login via email/password.
@@ -52,19 +56,20 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
 
     private void pressureTest() {
 
-        BaseSubscriber<JSONObject> baseSubscriber = new BaseSubscriber<JSONObject>() {
-            @Override
-            public void onNext(JSONObject jsonObject) {
-
-            }
-        };
+//        BaseSubscriber<JSONObject> baseSubscriber = new BaseSubscriber<JSONObject>() {
+//            @Override
+//            public void onNext(JSONObject jsonObject) {
+//
+//            }
+//        };
         for (int i = 0; i < 1; i++) {
 //            login();
-            subscriberBindLife(new TestGroupTask(new GetMeRequest().createFinalFlowObservable(),
-                            new ChapterRequest("math", "七年级上", "人教版").createFinalFlowObservable()).createFinalFlowObservable(),
-                    baseSubscriber);
+//            subscriberBindLife(new TestGroupTask(new GetMeRequest().createFinalFlowObservable(),
+//                            new ChapterRequest("math", "七年级上", "人教版").createFinalFlowObservable()).createFinalFlowObservable(),
+//                    baseSubscriber);
 //            getMe();
 //            getCourse();
+            getCVS();
         }
     }
 
@@ -118,6 +123,7 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
      * 登录
      */
     private void getMe() {
+        /* step1:build subscriber*/
         ProgressSubscriber<JSONObject> subscriber = new ProgressSubscriber<JSONObject>(this) {
             @Override
             public void onNext(JSONObject jsonObject) {
@@ -138,7 +144,13 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
             }
         };
 
-        subscriberBindLife(new GetMeRequest().createFinalFlowObservable(), subscriber);
+
+        /* step2:build  Observable  */
+        Observable<JSONObject> observable = new GetMeRequest()
+                .configStrategy(LOCAL_REFRSH_CACHE)
+                .createFinalFlowObservable();
+        /* step3:subscriber  */
+        subscriberBindLife(observable, subscriber);
     }
 
 
@@ -150,7 +162,24 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
             }
 
         };
-        subscriberBindLife(new ChapterRequest("math", "七年级上", "人教版").createFinalFlowObservable(), courseSubscriber);
+
+        Observable observable = new ChapterRequest("math", "七年级上", "人教版")
+                .createFinalFlowObservable();
+        subscriberBindLife(observable, courseSubscriber);
+    }
+
+    private void getCVS() {
+
+        BaseSubscriber courseSubscriber = new BaseSubscriber<JSONArray>() {
+            @Override
+            public void onNext(JSONArray jsonObject) {
+            }
+        };
+
+        Observable observable = new CVSRequest()
+                .configStrategy(LOCAL_NET_SAVE)
+                .createFinalFlowObservable();
+        subscriberBindLife(observable, courseSubscriber);
     }
 
 }

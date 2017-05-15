@@ -12,7 +12,7 @@ import com.bumptech.glide.Glide;
 import com.example.killnono.dalaran.ui.base.BaseActivity;
 import com.example.killnono.dalaran.ui.base.BaseSubscriber;
 import com.example.killnono.dalaran.R;
-import com.example.killnono.dalaran.domain.task.request.ChapterRequest;
+import com.example.killnono.domian.request.ChapterRequest;
 
 import org.json.JSONArray;
 

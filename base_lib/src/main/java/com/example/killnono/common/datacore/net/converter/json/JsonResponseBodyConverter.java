@@ -19,55 +19,39 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **/
-package com.example.killnono.dalaran.ui.base;
-
-import com.trello.rxlifecycle2.android.ActivityEvent;
-import com.trello.rxlifecycle2.components.RxActivity;
-
-import org.reactivestreams.Subscriber;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-
-import io.reactivex.Observable;
-import io.reactivex.Observer;
-import io.reactivex.schedulers.Schedulers;
-
-import static io.reactivex.android.schedulers.AndroidSchedulers.mainThread;
+package com.example.killnono.common.datacore.net.converter.json;
 
 /**
  * Created by Android Studio
  * User: killnono(陈凯)
- * Date: 17/1/19
- * Time: 下午1:23
+ * Date: 16/11/18
+ * Time: 下午4:39
  * Version: 1.0
  */
-public class BaseActivity extends RxActivity {
 
+import org.json.JSONException;
+import org.json.JSONObject;
 
-    /**
-     * @param observable
-     * @param s
-     * @param <T>
-     */
-    protected <T> void subscriberBindLife(Observable<T> observable, Observer<T> s) {
-        observable.
-                subscribeOn(Schedulers.io())
-                .observeOn(mainThread())
-                .compose(this.<T>bindUntilEvent(ActivityEvent.STOP))
-                .subscribe(s);
-    }
+import java.io.IOException;
 
-    protected <T> void subscriberNoLife(Observable<T> observable, Observer<T> s) {
-        observable.subscribeOn(Schedulers.io())
-                .observeOn(mainThread())
-                .subscribe(s);
+import okhttp3.ResponseBody;
+import retrofit2.Converter;
+
+final class JsonResponseBodyConverter<T> implements Converter<ResponseBody, T> {
+
+    JsonResponseBodyConverter() {
+
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    public T convert(ResponseBody value) throws IOException {
+        JSONObject jsonObj;
+        try {
+            jsonObj = new JSONObject(value.string());
+            return (T) jsonObj;
+        } catch (JSONException e) {
+            return null;
+        }
     }
+
 }

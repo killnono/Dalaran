@@ -19,43 +19,38 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **/
-package com.example.killnono.dalaran;
-
-import android.app.Application;
-import android.content.Context;
-
-import com.squareup.leakcanary.LeakCanary;
-
-import io.realm.Realm;
-import io.realm.RealmConfiguration;
+package com.example.killnono.common.datacore.net.converter.maplist;
 
 /**
  * Created by Android Studio
  * User: killnono(陈凯)
- * Date: 16/11/23
- * Time: 下午2:05
+ * Date: 16/11/18
+ * Time: 下午4:39
  * Version: 1.0
  */
 
-public class XApplication extends Application {
-    public static Context mContext;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import org.json.JSONArray;
+
+import java.io.IOException;
+
+import okhttp3.ResponseBody;
+import retrofit2.Converter;
+
+final class ListResponseBodyConverter<T> implements Converter<ResponseBody, T> {
+
+    ListResponseBodyConverter() {
+
+    }
 
     @Override
-    public void onCreate() {
-        super.onCreate();
-        mContext = this;
-        // The Realm file will be located in Context.getFilesDir() with name "default.realm"
-        Realm.init(this);
-        RealmConfiguration config = new RealmConfiguration.Builder()
-                .deleteRealmIfMigrationNeeded()
-                .build();
-        Realm.setDefaultConfiguration(config);
-
-        if (LeakCanary.isInAnalyzerProcess(this)) {
-            // This process is dedicated to LeakCanary for heap analysis.
-            // You should not init your app in this process.
-            return;
-        }
-        LeakCanary.install(this);
+    public T convert(ResponseBody value) throws IOException {
+        JSONArray jsonArray;
+        T list = new Gson().fromJson(value.string(), new TypeToken<T>() {
+        }.getType());
+        return list;
     }
+
 }

@@ -23,7 +23,8 @@ package com.example.killnono.dalaran.ui.base;
 
 import android.text.TextUtils;
 
-import com.example.killnono.dalaran.exception.XDBException;
+import com.example.killnono.common.exception.XDBException;
+import com.example.killnono.common.utils.LogUtils;
 import com.example.killnono.dalaran.manager.ToastManager;
 import com.example.killnono.dalaran.utils.Util;
 
@@ -47,18 +48,19 @@ public abstract class BaseSubscriber<T> implements Observer<T> {
 
     @Override
     public void onSubscribe(Disposable d) {
-        Util.log("onSubscribe: ");
+        Util.logMethodThreadId("onSubscribe");
+
         this.mDisposable = d;
     }
 
     @Override
     public void onComplete() {
-        Util.log("onCompleted:");
+        LogUtils.d("onCompleted");
     }
 
     @Override
     public void onError(Throwable e) {
-        Util.log("onError: " + e.getMessage());
+        LogUtils.d("onError: " + e.getMessage());
         //handle http exception
         if (e instanceof HttpException) {
             Response response = ((HttpException) e).response();

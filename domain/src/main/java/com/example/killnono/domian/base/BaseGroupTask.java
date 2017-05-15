@@ -19,55 +19,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **/
-package com.example.killnono.dalaran.ui.base;
-
-import com.trello.rxlifecycle2.android.ActivityEvent;
-import com.trello.rxlifecycle2.components.RxActivity;
-
-import org.reactivestreams.Subscriber;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
+package com.example.killnono.domian.base;
 
 import io.reactivex.Observable;
-import io.reactivex.Observer;
-import io.reactivex.schedulers.Schedulers;
-
-import static io.reactivex.android.schedulers.AndroidSchedulers.mainThread;
 
 /**
  * Created by Android Studio
  * User: killnono(陈凯)
- * Date: 17/1/19
- * Time: 下午1:23
+ * Date: 17/3/8
+ * Time: 下午10:06
  * Version: 1.0
  */
-public class BaseActivity extends RxActivity {
+public abstract class BaseGroupTask<V> implements ITask<V> {
 
-
-    /**
-     * @param observable
-     * @param s
-     * @param <T>
-     */
-    protected <T> void subscriberBindLife(Observable<T> observable, Observer<T> s) {
-        observable.
-                subscribeOn(Schedulers.io())
-                .observeOn(mainThread())
-                .compose(this.<T>bindUntilEvent(ActivityEvent.STOP))
-                .subscribe(s);
-    }
-
-    protected <T> void subscriberNoLife(Observable<T> observable, Observer<T> s) {
-        observable.subscribeOn(Schedulers.io())
-                .observeOn(mainThread())
-                .subscribe(s);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
+    public abstract Observable<V> createFinalFlowObservable();
 }

@@ -19,55 +19,29 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **/
-package com.example.killnono.dalaran.ui.base;
+package com.example.killnono.common.datacore.net.converter.json;
 
-import com.trello.rxlifecycle2.android.ActivityEvent;
-import com.trello.rxlifecycle2.components.RxActivity;
+import java.io.IOException;
 
-import org.reactivestreams.Subscriber;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-
-import io.reactivex.Observable;
-import io.reactivex.Observer;
-import io.reactivex.schedulers.Schedulers;
-
-import static io.reactivex.android.schedulers.AndroidSchedulers.mainThread;
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
+import retrofit2.Converter;
 
 /**
  * Created by Android Studio
  * User: killnono(陈凯)
- * Date: 17/1/19
- * Time: 下午1:23
+ * Date: 16/11/18
+ * Time: 下午4:56
  * Version: 1.0
  */
-public class BaseActivity extends RxActivity {
+final class JsonRequestBodyConverter<T> implements Converter<T, RequestBody> {
+    private static final MediaType MEDIA_TYPE = MediaType.parse("application/json; charset=UTF-8");
 
+    JsonRequestBodyConverter() {
 
-    /**
-     * @param observable
-     * @param s
-     * @param <T>
-     */
-    protected <T> void subscriberBindLife(Observable<T> observable, Observer<T> s) {
-        observable.
-                subscribeOn(Schedulers.io())
-                .observeOn(mainThread())
-                .compose(this.<T>bindUntilEvent(ActivityEvent.STOP))
-                .subscribe(s);
     }
 
-    protected <T> void subscriberNoLife(Observable<T> observable, Observer<T> s) {
-        observable.subscribeOn(Schedulers.io())
-                .observeOn(mainThread())
-                .subscribe(s);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    public RequestBody convert(T value) throws IOException {
+        return RequestBody.create(MEDIA_TYPE, value.toString());
     }
 }

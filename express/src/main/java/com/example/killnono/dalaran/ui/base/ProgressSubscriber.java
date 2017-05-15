@@ -24,7 +24,6 @@ package com.example.killnono.dalaran.ui.base;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
-import android.util.Log;
 
 import com.example.killnono.dalaran.utils.Util;
 
@@ -40,7 +39,7 @@ import io.reactivex.disposables.Disposable;
 public abstract class ProgressSubscriber<T> extends BaseSubscriber<T> {
 
     private Activity       mCurrentActivity;
-    private ProgressDialog dialog;
+    private ProgressDialog mDialog;
 
     @Override
     public void onSubscribe(Disposable d) {
@@ -69,8 +68,8 @@ public abstract class ProgressSubscriber<T> extends BaseSubscriber<T> {
 
 
     private void showDialog() {
-        if (dialog == null) {
-            dialog = ProgressDialog.show(mCurrentActivity, "登陆中", "请稍等", false, true, new DialogInterface.OnCancelListener() {
+        if (mDialog == null) {
+            mDialog = ProgressDialog.show(mCurrentActivity, "登陆中", "请稍等", false, true, new DialogInterface.OnCancelListener() {
                 @Override
                 public void onCancel(DialogInterface dialog) {
                     Util.log("ProgressDialog dialog is canceled");
@@ -84,9 +83,9 @@ public abstract class ProgressSubscriber<T> extends BaseSubscriber<T> {
      * dismiss dialog
      */
     private void dismissDialog() {
-        if (dialog != null) {
-            dialog.dismiss();
-            dialog = null;
+        if (mDialog != null) {
+            mDialog.dismiss();
+            mDialog = null;
         }
     }
 }

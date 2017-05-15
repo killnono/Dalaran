@@ -19,55 +19,51 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  **/
-package com.example.killnono.dalaran.ui.base;
+package com.example.killnono.domian.request;
 
-import com.trello.rxlifecycle2.android.ActivityEvent;
-import com.trello.rxlifecycle2.components.RxActivity;
 
-import org.reactivestreams.Subscriber;
+import com.example.killnono.common.datacore.net.apiservice.CourseApiService;
+import com.example.killnono.dataprovider.local.Course;
+import com.example.killnono.dataprovider.local.CourseStore;
+import com.example.killnono.domian.request.strategy.StrategyType;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
+import org.json.JSONObject;
 
 import io.reactivex.Observable;
-import io.reactivex.Observer;
-import io.reactivex.schedulers.Schedulers;
+import io.reactivex.functions.Function;
 
-import static io.reactivex.android.schedulers.AndroidSchedulers.mainThread;
 
 /**
  * Created by Android Studio
  * User: killnono(陈凯)
- * Date: 17/1/19
- * Time: 下午1:23
+ * Date: 16/11/18
+ * Time: 下午7:32
  * Version: 1.0
  */
-public class BaseActivity extends RxActivity {
+public class GetMeRequest extends UserInfoRelatedRequest<JSONObject> {
 
 
-    /**
-     * @param observable
-     * @param s
-     * @param <T>
-     */
-    protected <T> void subscriberBindLife(Observable<T> observable, Observer<T> s) {
-        observable.
-                subscribeOn(Schedulers.io())
-                .observeOn(mainThread())
-                .compose(this.<T>bindUntilEvent(ActivityEvent.STOP))
-                .subscribe(s);
-    }
-
-    protected <T> void subscriberNoLife(Observable<T> observable, Observer<T> s) {
-        observable.subscribeOn(Schedulers.io())
-                .observeOn(mainThread())
-                .subscribe(s);
+    @Override
+    protected StrategyType getFlowStrategyType() {
+        return StrategyType.LOCAL_NET_SAVE;
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    protected Observable<Course> localObservableOrigin() {
+        return CourseStore.getInstance().findDataByIdentifier(getCacheId());
     }
+
+    @Override
+    public Observable<JSONObject> remoteObservableOrigin() {
+        return CourseApiService.Factory.getInstance().getMe();
+    }
+
+
+    @Override
+    public Function<Course, JSONObject> dbDataMapFunc() {
+       return BaseRequest.RXHelper.funcCourse2JSONObject();
+    }
+
+
+
 }
